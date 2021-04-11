@@ -1,0 +1,35 @@
+from selenium import webdriver
+from bs4 import BeautifulSoup
+
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+
+driver = webdriver.Chrome('chromedriver',chrome_options=options)
+url = "https://www.youtube.com/feed/explore"
+driver.get(url)
+
+page = BeautifulSoup(driver.page_source, 'html.parser')
+
+raw_vid_list = page.find_all(id="video-title")
+clean_vid_list = []
+for element in raw_vid_list:
+    w_element = str(element.get('aria-label'))
+    w_element = w_element.strip()
+    length = len(w_element)
+    w_element = w_element[0:length-6]
+    i = 1
+    completed = False
+    while completed == False:
+        if w_element[-1*i].isspace() == True:
+            completed = True
+        else:
+            i += 1
+    w_element = w_element[(i-1)*-1:]
+    w_element = w_element.replace(",","")
+    clean_vid_list.append(w_element)
+
+clean_vid_string = "|".join(clean_vid_list)
+
+data_file = open("data_file.txt","w+",encoding="utf-8")
+data_file.write(clean_vid_string)
+data_file.close()
