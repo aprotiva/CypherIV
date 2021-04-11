@@ -1,0 +1,25 @@
+import os
+print(os.getcwd())
+data_file = open("data_file.txt","r")
+data = data_file.read()
+data_list = data.split("|")
+window_size = 1000
+max_val = 0
+for element in data_list:
+    element = int(element)
+    if element > max_val:
+        max_val = element
+scale_factor = max_val/window_size
+
+def setup():
+    global window_size
+    global scale_factor
+    size(window_size,window_size)
+    background(255)
+    stroke(5)
+    noFill()
+    
+def draw():
+    for element in data_list:
+        element = int(element)
+        ellipse(width/2,height/2,element/scale_factor,element/scale_factor)
